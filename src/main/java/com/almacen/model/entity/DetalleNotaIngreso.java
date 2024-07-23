@@ -37,4 +37,5 @@ public class DetalleNotaIngreso {
     @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
+
 }

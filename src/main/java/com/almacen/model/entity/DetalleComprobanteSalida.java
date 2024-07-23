@@ -8,12 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DetalleComprobanteSalida {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_detalle_comp_salida;
+    private Long idDetalleCompSalida;
 
     @ManyToOne
-    @JoinColumn(name = "id_comprobante_salida", nullable = false)
+    @JoinColumn(name = "id_comprobante_salida")
     private ComprobanteSalida comprobanteSalida;
 
     @ManyToOne

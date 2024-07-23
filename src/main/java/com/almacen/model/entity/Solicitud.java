@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
-
 
 @Entity
 @Getter
@@ -23,9 +23,6 @@ public class Solicitud {
     @Column(nullable = false, length = 45)
     private String motivo;
 
-    @Column(nullable = false)
-    private Integer cantidad;
-
     @Column(nullable = false, precision = 12, scale = 3)
     private BigDecimal importe;
 
@@ -33,7 +30,10 @@ public class Solicitud {
     @Column(nullable = false)
     private Estado estado;
 
-    @OneToMany(mappedBy = "solicitud")
+    @Column(nullable = false)
+    private Date fecha;
+
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DetalleSolicitud> detallesSolicitud;
 
     public enum Estado {

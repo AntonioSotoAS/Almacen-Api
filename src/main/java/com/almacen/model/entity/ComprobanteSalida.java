@@ -5,30 +5,35 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
-@Entity
 @Getter
 @Setter
+@Entity
+@Table(name = "comprobante_salida")
 public class ComprobanteSalida {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_comprobante_salida;
+    private Long idComprobanteSalida;
 
-    @Column(nullable = false, length = 20)
-    private String n_pecosa;
-
-    @Column(nullable = false)
+    @Getter @Setter
     private Date fecha;
 
+    @Getter @Setter
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Estado estado;
 
-    @OneToMany(mappedBy = "comprobanteSalida")
-    private Set<DetalleComprobanteSalida> detallesComprobanteSalida;
+    @Getter @Setter
+    @Column(nullable = true)
+    private String nPecosa;
+
+    @OneToMany(mappedBy = "comprobanteSalida", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DetalleComprobanteSalida> detallesComprobanteSalida;
 
     public enum Estado {
-        APROBADO, ANULADO
+        APROBADO,
+        PENDIENTE,
+        RECHAZADO
     }
+
 }

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -24,7 +23,7 @@ public class DetalleSolicitud {
     private Producto producto;
 
     @Column(nullable = false)
-    private Date fecha;
+    private Integer cantidad;
 
     @Column(nullable = false, precision = 10, scale = 3)
     private BigDecimal total;

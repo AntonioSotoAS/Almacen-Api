@@ -15,7 +15,7 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 18)
     private String username;
 
-    @Column(nullable = false, length = 255)  // Asegúrate de que la longitud aquí sea 255
+    @Column(nullable = false, length = 255)
     private String clave;
 
     @Enumerated(EnumType.STRING)
