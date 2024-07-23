@@ -8,6 +8,7 @@ import lombok.Setter;
 public class UsuarioResponseDto {
     private Integer id_usuario;
     private String username;
+    private String email;
     private String rol;
     private String estado;
 }

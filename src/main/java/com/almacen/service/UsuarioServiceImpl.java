@@ -1,4 +1,4 @@
-package com.almacen.service.impl;
+package com.almacen.service;
 
 import com.almacen.model.dto.RegisterRequest;
 import com.almacen.model.dto.UsuarioCreateOrUpdateDto;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,11 +35,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
         return new org.springframework.security.core.userdetails.User(
-                usuario.getUsername(),
+                usuario.getEmail(),
                 usuario.getClave(),
                 List.of(new SimpleGrantedAuthority(usuario.getRol().name()))
         );
@@ -46,6 +47,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioResponseDto createUsuario(UsuarioCreateOrUpdateDto usuarioCreateOrUpdateDto) {
+        validateEmail(usuarioCreateOrUpdateDto.getEmail());
+        validatePassword(usuarioCreateOrUpdateDto.getClave());
+
         Usuario usuario = modelMapper.map(usuarioCreateOrUpdateDto, Usuario.class);
         usuario.setClave(passwordEncoder.encode(usuario.getClave()));
         Usuario savedUsuario = usuarioRepository.save(usuario);
@@ -54,6 +58,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioResponseDto updateUsuario(Integer id, UsuarioCreateOrUpdateDto usuarioCreateOrUpdateDto) {
+        validateEmail(usuarioCreateOrUpdateDto.getEmail());
+        if (usuarioCreateOrUpdateDto.getClave() != null) {
+            validatePassword(usuarioCreateOrUpdateDto.getClave());
+        }
+
         Optional<Usuario> optionalUsuario = usuarioRepository.findById(id);
         if (optionalUsuario.isPresent()) {
             Usuario usuario = optionalUsuario.get();
@@ -90,11 +99,36 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void register(RegisterRequest request) {
+        validateEmail(request.getEmail());
+        validatePassword(request.getPassword());
+
         Usuario usuario = new Usuario();
         usuario.setUsername(request.getUsername());
+        usuario.setEmail(request.getEmail());
         usuario.setClave(passwordEncoder.encode(request.getPassword()));
         usuario.setRol(Usuario.Rol.valueOf(request.getRol()));
         usuario.setEstado(Usuario.Estado.HABILITADO);
         usuarioRepository.save(usuario);
     }
+
+    private void validateEmail(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        if (!pattern.matcher(email).matches()) {
+            throw new RuntimeException("Correo electrónico no es válido");
+        }
+    }
+
+    private void validatePassword(String password) {
+        if (password.length() < 8) {
+            throw new RuntimeException("La contraseña debe tener al menos 8 caracteres");
+        }
+    }
+
+    @Override
+    public Optional<Usuario> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+
 }

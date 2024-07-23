@@ -26,7 +26,7 @@ public class Producto {
     @JoinColumn(name = "id_unimed", nullable = false)
     private UnidadMedida unidadMedida;
 
-    @Column(nullable = false, length = 8)
+    @Column(nullable = false, unique = true)
     private String cod;
 
     @Column(nullable = false, length = 80)

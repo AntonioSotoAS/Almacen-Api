@@ -11,7 +11,7 @@ public class DetalleComprobanteSalida {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idDetalleCompSalida;
+    private Integer idDetalleCompSalida;
 
     @ManyToOne
     @JoinColumn(name = "id_comprobante_salida")

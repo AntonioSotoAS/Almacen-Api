@@ -3,6 +3,7 @@ package com.almacen.controller;
 import com.almacen.model.dto.AuthenticationRequest;
 import com.almacen.model.dto.AuthenticationResponse;
 import com.almacen.model.dto.RegisterRequest;
+import com.almacen.model.entity.Usuario;
 import com.almacen.security.JwtUtil;
 import com.almacen.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,27 @@ public class AuthController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
-            throw new Exception("Incorrect username or password", e);
+            throw new Exception("Incorrect email or password", e);
         }
 
-        final UserDetails userDetails = usuarioService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = usuarioService.loadUserByUsername(authenticationRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails, userDetails.getAuthorities().iterator().next().getAuthority());
 
-        AuthenticationResponse response = new AuthenticationResponse(jwt, userDetails.getUsername(), userDetails.getAuthorities().iterator().next().getAuthority());
+        Usuario usuario = usuarioService.findByEmail(authenticationRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        AuthenticationResponse response = new AuthenticationResponse(
+                jwt,
+                usuario.getEmail(),
+                usuario.getUsername(),
+                userDetails.getAuthorities().iterator().next().getAuthority()
+        );
         return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {

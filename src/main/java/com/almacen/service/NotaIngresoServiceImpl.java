@@ -79,7 +79,7 @@ public class NotaIngresoServiceImpl implements NotaIngresoService {
             detalleNotaIngresoRepository.save(detalle);
         }
 
-        return modelMapper.map(notaIngreso, NotaIngresoResponseDto.class);
+        return convertToDto(notaIngreso);
     }
 
     @Override

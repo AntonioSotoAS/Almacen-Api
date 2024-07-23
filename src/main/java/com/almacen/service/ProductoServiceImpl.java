@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +39,7 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setMarca(marcaRepository.findById(productoRequestDto.getId_marca()).orElseThrow(() -> new RuntimeException("Marca no encontrada")));
         producto.setCategoria(categoriaRepository.findById(productoRequestDto.getId_categoria()).orElseThrow(() -> new RuntimeException("Categoria no encontrada")));
         producto.setUnidadMedida(unidadMedidaRepository.findById(productoRequestDto.getId_unimed()).orElseThrow(() -> new RuntimeException("Unidad de medida no encontrada")));
-        producto.setCod(productoRequestDto.getCod());
+        producto.setCod(generateUniqueCode());
         producto.setDescripcion(productoRequestDto.getDescripcion());
         producto.setPrecio(productoRequestDto.getPrecio());
         producto.setEstado(productoRequestDto.getEstado());
@@ -53,13 +54,18 @@ public class ProductoServiceImpl implements ProductoService {
         producto.setMarca(marcaRepository.findById(productoRequestDto.getId_marca()).orElseThrow(() -> new RuntimeException("Marca no encontrada")));
         producto.setCategoria(categoriaRepository.findById(productoRequestDto.getId_categoria()).orElseThrow(() -> new RuntimeException("Categoria no encontrada")));
         producto.setUnidadMedida(unidadMedidaRepository.findById(productoRequestDto.getId_unimed()).orElseThrow(() -> new RuntimeException("Unidad de medida no encontrada")));
-        producto.setCod(productoRequestDto.getCod());
+        producto.setCod(generateUniqueCode());
         producto.setDescripcion(productoRequestDto.getDescripcion());
         producto.setPrecio(productoRequestDto.getPrecio());
         producto.setEstado(productoRequestDto.getEstado());
 
         Producto updatedProducto = productoRepository.save(producto);
         return mapToResponseDto(updatedProducto);
+    }
+
+    private String generateUniqueCode() {
+        // Utiliza un UUID para asegurar un código único
+        return "P-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 
     @Override
