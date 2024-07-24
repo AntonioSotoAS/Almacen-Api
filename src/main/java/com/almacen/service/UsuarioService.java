@@ -24,4 +24,6 @@ public interface UsuarioService extends UserDetailsService {
     void register(RegisterRequest request);
 
     Optional<Usuario> findByEmail(String email);
+
+    Usuario getAuthenticatedUser();
 }

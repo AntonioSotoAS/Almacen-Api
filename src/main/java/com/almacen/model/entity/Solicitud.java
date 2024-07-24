@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,28 +15,27 @@ import java.util.Set;
 public class Solicitud {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id_solicitud;
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "id_dependencia", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dependencia_id", nullable = false)
     private Dependencia dependencia;
 
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false)
     private String motivo;
 
-    @Column(nullable = false, precision = 12, scale = 3)
-    private BigDecimal importe;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Estado estado;
+    private Double importe;
 
+    @Column(nullable = false)
+    private String estado;
+
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date fecha;
 
     @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<DetalleSolicitud> detallesSolicitud;
-
+    private List<DetalleSolicitud> detallesSolicitud;
     public enum Estado {
         PENDIENTE, APROBADA, RECHAZADA
     }

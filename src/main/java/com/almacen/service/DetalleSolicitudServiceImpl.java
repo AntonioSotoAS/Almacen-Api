@@ -6,7 +6,6 @@ import com.almacen.model.entity.DetalleSolicitud;
 import com.almacen.repository.DetalleSolicitudRepository;
 import com.almacen.repository.ProductoRepository;
 import com.almacen.repository.SolicitudRepository;
-import com.almacen.service.DetalleSolicitudService;
 import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +38,11 @@ public class DetalleSolicitudServiceImpl implements DetalleSolicitudService {
 
     @Override
     public DetalleSolicitudResponseDto createDetalleSolicitud(DetalleSolicitudRequestDto detalleSolicitudRequestDto) {
-        DetalleSolicitud detalleSolicitud = new DetalleSolicitud();
+        DetalleSolicitud detalleSolicitud = modelMapper.map(detalleSolicitudRequestDto, DetalleSolicitud.class);
         detalleSolicitud.setSolicitud(solicitudRepository.findById(detalleSolicitudRequestDto.getIdSolicitud())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada")));
         detalleSolicitud.setProducto(productoRepository.findById(detalleSolicitudRequestDto.getIdProducto())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado")));
-        detalleSolicitud.setCantidad(detalleSolicitudRequestDto.getCantidad());
-        detalleSolicitud.setTotal(detalleSolicitudRequestDto.getTotal());
 
         DetalleSolicitud savedDetalleSolicitud = detalleSolicitudRepository.save(detalleSolicitud);
         return modelMapper.map(savedDetalleSolicitud, DetalleSolicitudResponseDto.class);
